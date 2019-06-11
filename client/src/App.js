@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import SavedList from './Movies/SavedList';
 import MovieList from './Movies/MovieList';
@@ -14,16 +15,23 @@ export default class App extends Component {
 
   addToSavedList = movie => {
     const savedList = this.state.savedList;
-    savedList.push(movie);
+    
+    console.log(movie);
+
+    if(!savedList.find(m => m.id === movie.id))
+      savedList.push(movie);
+    else savedList.splice(savedList.findIndex(m => m.id === movie.id), 1);
+
     this.setState({ savedList });
   };
 
   render() {
     return (
-      <div>
+      <Router>
         <SavedList list={this.state.savedList} />
-        <div>Replace this Div with your Routes</div>
-      </div>
+        <Route exact path='/' component={MovieList} />
+        <Route path='/movies/:id' render={props => <Movie {...props} addToSavedList={this.addToSavedList} />} />
+      </Router>
     );
   }
 }
